@@ -1,3 +1,9 @@
+# Memo
+
+```shell
+ssh -L 16006:127.0.0.1:6006 root@192.168.2.136
+```
+
 # Backdoors 101
 
 <p align="center">

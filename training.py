@@ -106,8 +106,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Backdoors')
     parser.add_argument('--params', dest='params', default='utils/params.yaml')
     parser.add_argument('--name', dest='name', required=True)
-    parser.add_argument('--commit', dest='commit',
-                        default=get_current_git_hash())
+    # parser.add_argument('--commit', dest='commit', default=get_current_git_hash())
 
     args = parser.parse_args()
 
@@ -115,7 +114,7 @@ if __name__ == '__main__':
         params = yaml.load(f, Loader=yaml.FullLoader)
 
     params['current_time'] = datetime.now().strftime('%b.%d_%H.%M.%S')
-    params['commit'] = args.commit
+    # params['commit'] = args.commit
     params['name'] = args.name
 
     helper = Helper(params)
