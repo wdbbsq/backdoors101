@@ -20,6 +20,7 @@ class Attack:
     nc_model: Model
     nc_optim: torch.optim.Optimizer
     loss_hist = list()
+
     # fixed_model: Model
 
     def __init__(self, params, synthesizer):
@@ -121,7 +122,6 @@ class Attack:
 
         self.nc_model.switch_grads(False)
         model.switch_grads(True)
-
 
     def fl_scale_update(self, local_update: Dict[str, torch.Tensor]):
         for name, value in local_update.items():

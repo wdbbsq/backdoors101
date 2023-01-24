@@ -7,42 +7,50 @@ test_batch_size: 100
 lr: 0.1
 momentum: 0.9
 decay: 0.0005
-epochs: 350
+# 全局迭代次数 200
+epochs: 50
 save_on_epochs: []
 optimizer: SGD
 log_interval: 100
 
 pretrained: False
 
+# 是否使用余弦退火策略
 scheduler: False
 
 poisoning_proportion: 0.5
 backdoor_label: 8
 
+# 是否预训练？
 #resume_model: model_CifarFed_Nov.26_20.32.44_no_attack_fl/model
 
 loss_balance: MGDA
 mgda_normalize: none
 
-save_model: True
-log: True
+save_model: False
+log: False
 tb: True
 report_train_loss: False
 
 transform_train: True
 
 fl: True
+# 每轮选择的客户端数量
 fl_no_models: 10
 fl_local_epochs: 2
 fl_total_participants: 100
+# 全局学习率，每轮次参与训练的客户端数量
 fl_eta: 10
+# 是否使用迪利克雷分布模拟 non-iid
 fl_sample_dirichlet: False
 fl_dirichlet_alpha: None
+
 fl_diff_privacy:  False
 fl_dp_clip: None
 fl_dp_noise: None
 
-fl_number_of_adversaries: 0
+fl_number_of_adversaries: 1
+# how much the weights scale
 fl_weight_scale: 100
 #fl_single_epoch_attack: 1
 

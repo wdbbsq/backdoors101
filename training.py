@@ -48,9 +48,9 @@ def test(hlpr: Helper, epoch, backdoor=False):
             outputs = model(batch.inputs)
             hlpr.task.accumulate_metrics(outputs=outputs, labels=batch.labels)
     metric = hlpr.task.report_metrics(epoch,
-                             prefix=f'Backdoor {str(backdoor):5s}. Epoch: ',
-                             tb_writer=hlpr.tb_writer,
-                             tb_prefix=f'Test_backdoor_{str(backdoor):5s}')
+                                      prefix=f'Backdoor {str(backdoor):5s}. Epoch: ',
+                                      tb_writer=hlpr.tb_writer,
+                                      tb_prefix=f'Test_backdoor_{str(backdoor):5s}')
 
     return metric
 
@@ -64,8 +64,10 @@ def run(hlpr):
         acc = test(hlpr, epoch, backdoor=False)
         test(hlpr, epoch, backdoor=True)
         hlpr.save_model(hlpr.task.model, epoch, acc)
+        # 更新学习率
         if hlpr.task.scheduler is not None:
             hlpr.task.scheduler.step(epoch)
+
 
 def fl_run(hlpr: Helper):
     for epoch in range(hlpr.params.start_epoch,
@@ -78,6 +80,10 @@ def fl_run(hlpr: Helper):
 
 
 def run_fl_round(hlpr, epoch):
+    """
+    local training
+
+    """
     global_model = hlpr.task.model
     local_model = hlpr.task.local_model
 
@@ -88,14 +94,18 @@ def run_fl_round(hlpr, epoch):
         hlpr.task.copy_params(global_model, local_model)
         optimizer = hlpr.task.make_optimizer(local_model)
         for local_epoch in range(hlpr.params.fl_local_epochs):
-            if user.compromised:
-                train(hlpr, local_epoch, local_model, optimizer,
-                      user.train_loader, attack=True)
-            else:
-                train(hlpr, local_epoch, local_model, optimizer,
-                      user.train_loader, attack=False)
+            train(hlpr, local_epoch, local_model, optimizer,
+                  user.train_loader, attack=user.compromised)
+            # if user.compromised:
+            #     train(hlpr, local_epoch, local_model, optimizer,
+            #           user.train_loader, attack=True)
+            # else:
+            #     train(hlpr, local_epoch, local_model, optimizer,
+            #           user.train_loader, attack=False)
         local_update = hlpr.task.get_fl_update(local_model, global_model)
+
         if user.compromised:
+            # 缩放参数
             hlpr.attack.fl_scale_update(local_update)
         hlpr.task.accumulate_weights(weight_accumulator, local_update)
 
@@ -110,7 +120,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    with open(args.params) as f:
+    with open(args.params, encoding='utf-8') as f:
         params = yaml.load(f, Loader=yaml.FullLoader)
 
     params['current_time'] = datetime.now().strftime('%b.%d_%H.%M.%S')

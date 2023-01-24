@@ -21,9 +21,9 @@ backdoor_dynamic_position: False
 loss_balance: MGDA
 mgda_normalize: loss
 
-save_model: False
-log: False
-tb: False
+save_model: True
+log: True
+tb: True
 
 transform_train: True
 

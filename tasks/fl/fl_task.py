@@ -143,6 +143,9 @@ class FederatedLearningTask(Task):
             sum_update_tensor.add_(noised_layer)
 
     def get_update_norm(self, local_update):
+        """
+        计算本地更新的 L2 范数
+        """
         squared_sum = 0
         for name, value in local_update.items():
             if self.check_ignored_weights(name):
